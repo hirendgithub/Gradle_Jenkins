@@ -1,0 +1,26 @@
+               stage('checkmarx-scan'){
+                    steps {
+                 step([$class: 'CxScanBuilder', comment: "${SERVICE_NAME}_${BRANCH_NAME}", configAsCode: true, credentialsId: 'PFM_Checkmarx', customFields: '', dependencyScanConfig: [dependencyScanExcludeFolders: '', dependencyScanPatterns: '', dependencyScannerType: 'OSA', enableScaResolver: 'MANIFEST', fsaVariables: '', osaArchiveIncludePatterns: '*.zip, *.war, *.ear, *.tgz', osaInstallBeforeScan: true, overrideGlobalConfig: true, pathToScaResolver: '', sastCredentialsId: '', scaAccessControlUrl: 'https://platform.checkmarx.net', scaConfigFile: '', scaCredentialsId: '', scaEnvVariables: '', scaResolverAddParameters: '', scaSASTProjectFullPath: '', scaSASTProjectID: '', scaSastServerUrl: '', scaServerUrl: 'https://api-sca.checkmarx.net', scaTeamPath: '', scaTenant: '', scaWebAppUrl: 'https://sca.checkmarx.net'], excludeFolders: '', exclusionsSetting: 'global', failBuildOnNewResults: false, failBuildOnNewSeverity: 'HIGH', filterPattern: '''!**/*.tpl,    !**/_cvs/**/*, !**/.svn/**/*,   !**/.hg/**/*,   !**/.git/**/*,  !**/.bzr/**/*, !**/bin/**/*,
+!**/obj/**/*,  !**/backup/**/*, !**/.idea/**/*, !**/*.DS_Store, !**/*.ipr,     !**/*.iws,
+!**/*.bak,     !**/*.tmp,       !**/*.aac,      !**/*.aif,      !**/*.iff,     !**/*.m3u, !**/*.mid, !**/*.mp3,
+!**/*.mpa,     !**/*.ra,        !**/*.wav,      !**/*.wma,      !**/*.3g2,     !**/*.3gp, !**/*.asf, !**/*.asx,
+!**/*.avi,     !**/*.flv,       !**/*.mov,      !**/*.mp4,      !**/*.mpg,     !**/*.rm,  !**/*.swf, !**/*.vob,
+!**/*.wmv,     !**/*.bmp,       !**/*.gif,      !**/*.jpg,      !**/*.png,     !**/*.psd, !**/*.tif, !**/*.swf,
+!**/*.jar,     !**/*.zip,       !**/*.rar,      !**/*.exe,      !**/*.dll,     !**/*.pdb, !**/*.7z,  !**/*.gz,
+!**/*.tar.gz,  !**/*.tar,       !**/*.gz,       !**/*.ahtm,     !**/*.ahtml,   !**/*.fhtml, !**/*.hdm,
+!**/*.hdml,    !**/*.hsql,      !**/*.ht,       !**/*.hta,      !**/*.htc,     !**/*.htd, !**/*.war, !**/*.ear,
+!**/*.htmls,   !**/*.ihtml,     !**/*.mht,      !**/*.mhtm,     !**/*.mhtml,   !**/*.ssi, !**/*.stm,
+!**/*.stml,    !**/*.ttml,      !**/*.txn,      !**/*.xhtm,     !**/*.xhtml,   !**/*.class, !**/*.iml, !Checkmarx/Reports/*.*''', fullScanCycle: 10, generatePdfReport: true, groupId: '5', hideDebugLogs: true, incremental: true, password: '{AQAAABAAAAAQgd67NlUcUKfBdcY+8FsOLxUtjYnIG496kJfao9g5lXY=}', preset: '0', projectName: 'PFM', sastEnabled: true, serverUrl: 'https://checkmarkx_vs.axisb.com', sourceEncoding: '6', useOwnServerCredentials: true, username: '', vulnerabilityThresholdResult: 'FAILURE', waitForResultsEnabled: true])
+                  script{
+                        if ( "${currentBuild.currentResult}" == "FAILURE" ){
+                                error "Checkmark Scan FAILED"
+                        }
+                }
+
+               }
+                        post{
+                            always{
+                                     mail bcc: '', body: "Checkmarx Scan has been completed for Jenkins ${env.JOB_BASE_NAME} Job (Build Num: ${env.BUILD_NUMBER}). Please follow below link to view the checkmarx results on the Jenkins Dashboard: \n ${env.BUILD_URL} ", cc: '', from: 'nodotreply@axisbank.com', replyTo: 'nodotreply@axisbank.com', subject: "Jenkins ${env.JOB_BASE_NAME} Job (Build Num: ${env.BUILD_NUMBER}) | Checkmarx Result | ${currentBuild.currentResult}", to: 'tp000210236@axisbank.com'
+                                }
+                        }
+                }
